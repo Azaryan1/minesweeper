@@ -1,0 +1,31 @@
+.cell {
+  width: 30px;
+  height: 30px;
+  border: solid 1px;
+  background-color: gray;
+}
+
+.row_hard {
+  width: 900px;
+}
+
+.row_medium {
+  width: 480px;
+}
+.open {
+  background-color: aqua;
+  text-align: center;
+  margin: auto;
+}
+
+.bomb {
+  background-color: red;
+}
+
+.mark {
+  background-color: orange;
+}
+
+#board {
+  cursor: pointer;
+}

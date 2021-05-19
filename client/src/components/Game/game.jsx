@@ -69,7 +69,7 @@ const Game = () => {
       });
   };
 
-  const movieHandler = (row, col, e) => {
+  const moveHandler = (row, col, e) => {
     e.preventDefault();
     if (
       (gameData.board[row][col].isOpen && e.button !== 1) ||
@@ -135,7 +135,7 @@ const Game = () => {
       if (nMarked === gameData.board[row][col].val) {
         neighbors.forEach(([r, c]) => {
           if (!gameData.board[r][c].isMarked && !gameData.board[r][c].isOpen) {
-            movieHandler(r, c, { button: 0, preventDefault: () => {} }); // make a fake left click event
+            moveHandler(r, c, { button: 0, preventDefault: () => {} }); // make a fake left click event
           }
         });
       }
@@ -195,7 +195,7 @@ const Game = () => {
             {gameData.nMarked} cells
           </p>
           <Board
-            movieHandler={movieHandler}
+            moveHandler={moveHandler}
             restart={selectDifficulty}
             difficulty={gameData.difficulty}
             board={gameData.board}

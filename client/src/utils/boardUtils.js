@@ -13,6 +13,39 @@ class Cell {
   }
 }
 
+const getNeighbors = (board, row, col) => {
+  const list = [];
+  const maxRow = board.length - 1;
+  const maxCom = board[0].length - 1;
+  if (row - 1 >= 0) {
+    if (col - 1 >= 0) {
+      list.push([row - 1, col - 1]);
+    }
+    list.push([row - 1, col]);
+    if (col + 1 <= maxCom) {
+      list.push([row - 1, col + 1]);
+    }
+  }
+
+  if (row + 1 <= maxRow) {
+    if (col - 1 >= 0) {
+      list.push([row + 1, col - 1]);
+    }
+    list.push([row + 1, col]);
+    if (col + 1 <= maxCom) {
+      list.push([row + 1, col + 1]);
+    }
+  }
+
+  if (col - 1 >= 0) {
+    list.push([row, col - 1]);
+  }
+  if (col + 1 <= maxCom) {
+    list.push([row, col + 1]);
+  }
+  return list;
+};
+
 const generateBoard = (rows, cols, mines) => {
   let board = [...new Array(rows)].map(() => new Array(cols).fill(undefined));
   board = board.map((arr) => arr.map(() => new Cell(false, 0)));
@@ -135,6 +168,7 @@ const formatSeconds = (second) => {
 
 export default {
   generateBoard,
+  getNeighbors,
   getSettings,
   formatSeconds,
   cascade,

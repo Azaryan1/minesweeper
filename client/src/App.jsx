@@ -5,6 +5,8 @@ import './App.css';
 
 import AuthService from './services/auth.service';
 
+import Login from './components/login';
+import Register from './components/register';
 import Home from './components/home';
 import Top from './components/top';
 import Game from './components/Game/game';
@@ -52,13 +54,27 @@ const App = () => {
             </div>
           </>
         ) : (
-          <div className="navbar-nav ml-auto">REGISTER</div>
+          <div className="navbar-nav ml-auto">
+            <li className="nav-item">
+              <Link to="/login" className="nav-link">
+                Login
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link to="/register" className="nav-link">
+                Sign Up
+              </Link>
+            </li>
+          </div>
         )}
       </nav>
 
       <div className="container mt-3">
         <Switch>
           <Route exact path={['/', '/home']} component={Home} />
+          <Route exact path="/login" component={Login} />
+          <Route exact path="/register" component={Register} />
           <Route exact path="/top" component={Top} />
           <Route exact path="/new" component={Game} />
         </Switch>

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 import DifficultySelector from './difficultySelector';
 import Board from './board';
 import Utils from '../../utils/boardUtils';
+import Timer from './timer';
 
 import AuthService from '../../services/auth.service';
 import UserService from '../../services/user.service';
 
 import UserResults from './userResults';
+import GameOverModal from './gameOverModal';
 
 const initialState = {
   gameData: {
@@ -38,7 +41,7 @@ const initialState = {
   },
 };
 
-const { generateBoard, getSettings, cascade } = Utils;
+const { generateBoard, getSettings, getNeighbors, cascade } = Utils;
 
 const Game = () => {
   const [gameData, setGameData] = useState(initialState.gameData);
@@ -66,7 +69,7 @@ const Game = () => {
       });
   };
 
-  const moveHandler = (row, col, e) => {
+  const movieHandler = (row, col, e) => {
     e.preventDefault();
     if (
       (gameData.board[row][col].isOpen && e.button !== 1) ||
@@ -117,6 +120,40 @@ const Game = () => {
         gameOver: isGameOver,
         remaining: r,
       });
+    } else if (
+      e.button === 1 &&
+      gameData.board[row][col].isOpen &&
+      gameData.board[row][col].val > 0
+    ) {
+      const neighbors = getNeighbors(gameData.board, row, col);
+      const nMarked = neighbors.reduce((accumulator, [r, c]) => {
+        if (gameData.board[r][c].isMarked) {
+          return accumulator + 1;
+        }
+        return accumulator;
+      }, 0);
+      if (nMarked === gameData.board[row][col].val) {
+        neighbors.forEach(([r, c]) => {
+          if (!gameData.board[r][c].isMarked && !gameData.board[r][c].isOpen) {
+            movieHandler(r, c, { button: 0, preventDefault: () => {} }); // make a fake left click event
+          }
+        });
+      }
+    } else if (e.button === 2 && !gameData.board[row][col].isOpen) {
+      newBoard = gameData.board.map((el) => [...el]);
+      newBoard[row][col].isMarked = !newBoard[row][col].isMarked;
+      let { nMarked } = gameData;
+      if (newBoard[row][col].isMarked) {
+        nMarked += 1;
+      }
+      if (!newBoard[row][col].isMarked) {
+        nMarked -= 1;
+      }
+      setGameData({
+        ...gameData,
+        board: newBoard,
+        nMarked,
+      });
     }
   };
 
@@ -142,18 +179,23 @@ const Game = () => {
     submitResults(Math.round((new Date() - startTime) / 1000));
   }, [gameData.gameOver]);
 
+  if (!user) {
+    return <Redirect to="/login" />;
+  }
+
   return (
     <div className="container justify-content-center align-items-center">
       {gameData.difficulty ? (
         <>
           <UserResults userStat={userStat} />
+          <Timer gameOver={gameData.gameOver} startTime={startTime} />
           <p className="text-center">
             {Math.max(gameData.nMines - gameData.nMarked, 0)} mines remaining:
             there are {gameData.nMines} mines and you have marked{' '}
             {gameData.nMarked} cells
           </p>
           <Board
-            moveHandler={moveHandler}
+            movieHandler={movieHandler}
             restart={selectDifficulty}
             difficulty={gameData.difficulty}
             board={gameData.board}
@@ -167,6 +209,12 @@ const Game = () => {
           <DifficultySelector onSelect={selectDifficulty} />
         </>
       )}
+      <GameOverModal
+        isOpen={gameData.gameOver}
+        isWin={gameData.remaining === 0 && gameData.gameOver}
+        difficulty={gameData.difficulty}
+        restart={selectDifficulty}
+      />
     </div>
   );
 };

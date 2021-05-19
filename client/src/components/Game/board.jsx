@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { v4 as uuidv4 } from 'uuid';
 import './Game.css';
 
-const Board = ({ board, moveHandler, restart, difficulty }) => {
+const Board = ({ board, movieHandler, restart, difficulty }) => {
   const cols = [];
 
   for (let i = 0; i < board.length; i++) {
@@ -26,7 +26,7 @@ const Board = ({ board, moveHandler, restart, difficulty }) => {
       }
       row.push(
         <span
-          onMouseDown={(e) => moveHandler(i, j, e)}
+          onMouseDown={(e) => movieHandler(i, j, e)}
           onContextMenu={(e) => e.preventDefault()}
           className={`cell ${classes.join(' ')}`}
           key={uuidv4()}
@@ -78,7 +78,7 @@ const Board = ({ board, moveHandler, restart, difficulty }) => {
 
 Board.propTypes = {
   board: PropTypes.arrayOf(PropTypes.array).isRequired,
-  moveHandler: PropTypes.func.isRequired,
+  movieHandler: PropTypes.func.isRequired,
   restart: PropTypes.func.isRequired,
   difficulty: PropTypes.string.isRequired,
 };
